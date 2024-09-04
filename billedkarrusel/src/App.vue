@@ -12,6 +12,7 @@
         ],
         startIndex: 0,
         maxImages: 3,
+        rotationInterval: null,
       };
     },
     computed: {
@@ -34,7 +35,15 @@
       next() {
         this.startIndex = (this.startIndex + 1) % this.images.length
       },
-    }
+      autoRotation() {
+        this.rotationInterval = setInterval(() => {
+          this.next();
+        }, 10000)
+      },
+    },
+    mounted() {
+      this.autoRotation();
+    },
   }
 </script>
 
