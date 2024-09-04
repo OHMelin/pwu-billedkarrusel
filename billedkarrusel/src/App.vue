@@ -47,8 +47,21 @@
         if (this.comment.trim()) {
           this.images[this.currentIndex].comments.push(this.comment);
           this.comment = '';
+          this.saveComments();
         }
-      }
+      },
+      saveComments() {
+        localStorage.setItem('images', JSON.stringify(this.images));
+      },
+      loadComments() {
+        const savedImages = localStorage.getItem('images');
+        if (savedImages) {
+          this.images = JSON.parse(savedImages)
+        }
+      },
+    },
+    created() {
+      this.loadComments();
     },
     mounted() {
       this.autoRotation();
