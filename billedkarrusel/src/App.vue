@@ -3,24 +3,25 @@
     data() {
       return {
         images: [
-          '1.jpg',
-          '2.jpg',
-          '3.jpg',
-          '4.jpg',
-          '5.jpg',
-          '6.jpg',
+          {path: '0.jpg', comments: ['abc0', 'def']},
+          {path: '1.jpg', comments: ['abc1', 'def']},
+          {path: '2.jpg', comments: ['abc2', 'def']},
+          {path: '3.jpg', comments: ['abc3', 'def']},
+          {path: '4.jpg', comments: ['abc4', 'def']},
+          {path: '5.jpg', comments: ['abc5', 'def']},
         ],
-        startIndex: 0,
+        currentIndex: 0,
         maxImages: 3,
         rotationInterval: null,
       };
     },
     computed: {
       callListImages() {
-        return this.listImages(this.startIndex, this.maxImages)
+        return this.listImages(this.currentIndex, this.maxImages)
       }
     },
     methods: {
+      // Carousel
       listImages(start, limit) {
         const images = [];
         for (let i = 0; i < limit; i++) {
@@ -30,16 +31,24 @@
         return images;
       },
       previous() {
-        this.startIndex = (this.startIndex - 1 + this.images.length) % this.images.length
+        this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length
       },
       next() {
-        this.startIndex = (this.startIndex + 1) % this.images.length
+        this.currentIndex = (this.currentIndex + 1) % this.images.length
       },
       autoRotation() {
         this.rotationInterval = setInterval(() => {
           this.next();
         }, 10000)
       },
+
+      // Comments
+      addComment() {
+        if (this.comment.trim()) {
+          this.images[this.currentIndex].comments.push(this.comment);
+          this.comment = '';
+        }
+      }
     },
     mounted() {
       this.autoRotation();
@@ -51,8 +60,17 @@
   <main>
     <div class="outer-container">
       <button v-on:click="previous()">Previous</button>
-      <img v-for="(image, index) in callListImages" :key="index" :src="`/src/assets/images/${image}`"/>
+      <img v-for="(image, index) in callListImages" :key="index" :src="`/src/assets/images/${image.path}`"/>
       <button v-on:click="next()">Next</button>
+    </div>
+    <div class="comment-container">
+      <p>Add comment for middle picture</p>
+      <input v-model="comment" placeholder="Your comment"></input>
+      <button v-on:click="addComment()">Submit</button>
+      <p>Current comments:</p>
+      <ul>
+        <li v-for="(comment, index) in images[this.currentIndex].comments" :key="index">{{ comment }}</li>
+      </ul>
     </div>
   </main>
 </template>
@@ -69,6 +87,13 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
+  }
+  .comment-container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
   }
   .img-container {
     height: 100px;
